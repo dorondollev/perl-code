@@ -102,14 +102,15 @@ if(@files)
             unlink $file or die "CRITICAL - Can't delete file: $file\n";
         }
     }
-    print "OK - dbdocs NTBG cleanup finished successfuly\n";
-    exit 0;
 }
-
-system("mv $saveDir/* $ntprdDir/") == 0 or die "CRITICAL - Can't move files from $saveDir to $ntprdDir:$!";
 close(FH);
 close(FH2);
 close(FH3);
+
+system("mv $saveDir/* $ntprdDir/") == 0 or die "CRITICAL - Can't move files from $saveDir to $ntprdDir:$!";
+print "OK - dbdocs NTBG cleanup finished successfuly\n";
+exit 0;
+
 if ( -s $missingFiles)
 {
     system("mailx -s 'missing documents' dorond\@moia.gov.il < $missingFiles");
