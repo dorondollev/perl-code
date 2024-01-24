@@ -1,12 +1,34 @@
 #!/usr/bin/perl
 use strict;
 use warnings FATAL => 'all';
+use POSIX qw(difftime);
 
 my $docFilesList = "/siren_nfs/docs.txt";
 my $ntprdDir = "/dbdocs/ntprd";
 my $saveDir = "/dbdocs/saved/";
 my $dbdocsDir = "/siren_nfs";
 my $dh;
+my $current_time = time();
+if ( -f $docFilesList )
+{
+        my @docFilesListStat = stat($docFilesList);
+        if (@docFilesListStat)
+        {
+                my $modification_time = $docFilesListStat[9];
+                my $age_in_seconds = difftime($current_time, $modification_time);
+                if ($age_in_seconds > 3600)
+                {
+                        print "CRITICAL - File $docFilesList is over an hour it could be its unupdated\n";
+                        exit 2;
+                }
+        }
+}
+else
+{
+        print "CRITICAL - File $docFilesList not exist\n";
+        exit 2;
+}
+
 opendir($dh, $saveDir) or die "CRITICAL - Can't open directory $saveDir\n";
 my @files = grep { !/^\.{1,2}$/ } readdir($dh);
 closedir($dh);
