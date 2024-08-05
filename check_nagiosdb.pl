@@ -100,3 +100,4 @@ if (my $row = $sth->fetchrow_hashref()) {
 }
 
 # Disconnect from the database
+$dbh->disconnect();
